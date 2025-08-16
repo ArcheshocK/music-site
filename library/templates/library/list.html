@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Downloadable Music</h1>
+  <a class="btn" href="{% url 'user_activity' %}">View Past Downloads & Favorites</a>
+
+  {% if files %}
+    <ul>
+      {% for f in files %}
+        <li>
+          {{ f }} —
+          <a class="btn" href="{% url 'download_music' f %}">Download</a>
+          <a class="btn" href="{% url 'toggle_favorite' f %}">
+            {% if f in favorites %}
+              ★ Unfavorite
+            {% else %}
+              ☆ Favorite
+            {% endif %}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No music files found in <code>music_files</code>.</p>
+  {% endif %}
+{% endblock %}

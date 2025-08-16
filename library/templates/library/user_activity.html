@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Your Activity</h1>
+
+  <a class="btn" href="{% url 'music_list' %}">← Back to Music Library</a>
+
+  <section>
+    <h2>🎧 Favorites</h2>
+    {% if favorites %}
+      <ul>
+        {% for fav in favorites %}
+          <li>{{ fav.filename }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>You have no favorite files yet.</p>
+    {% endif %}
+  </section>
+
+  <section style="margin-top: 2rem;">
+    <h2>⬇️ Download History</h2>
+    {% if downloads %}
+      <ul>
+        {% for log in downloads %}
+          <li>{{ log.filename }} — <small>{{ log.downloaded_at|date:"Y-m-d H:i" }}</small></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>You haven't downloaded any files yet.</p>
+    {% endif %}
+  </section>
+{% endblock %}
