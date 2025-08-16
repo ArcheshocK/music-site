@@ -14,11 +14,9 @@ It demonstrates a simple music library web application written in Django. It is 
 - Search for other users
 
 ## Existing Users
-
-username: alice | password: password123
-username: bob | password: password123
-username: axel | password: password123
-
+- username: alice | password: password123  
+- username: bob   | password: password123  
+- username: axel  | password: password123
 
 ---
 
@@ -44,7 +42,8 @@ username: axel | password: password123
 - `DEBUG = True` is enabled which exposes sensitive information if deployed in production
 - Fix: set `DEBUG = False` in production
 
-### [Flaw 6: Identification and Authentication Failures (A07:2021)](https://github.com/ArcheshocK/music-site/blob/main/music_site/settings.py#L1-L13) (https://github.com/ArcheshocK/music-site/blob/main/templates/registration/login.html#L3-L8)
+### [Flaw 6: Identification and Authentication Failures (A07:2021)](https://github.com/ArcheshocK/music-site/blob/main/music_site/settings.py#L1-L13) [(login.html)](https://github.com/ArcheshocK/music-site/blob/main/templates/registration/login.html#L3-L8)
+
 - no rate limiting or lockout for repeated failed login attempts
 - suggested fix: integrate `django-axes` to block brute force login attempts
 
