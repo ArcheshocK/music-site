@@ -1,6 +1,6 @@
 # Music Site - Django Web Application
 
-This project is created for the [University of Helsinki Cyber Security Base 2024](https://cybersecuritybase.mooc.fi/) course project  
+This project is created for the [University of Helsinki Cyber Security Base 2025](https://cybersecuritybase.mooc.fi/) course project  
 It demonstrates a simple music library web application written in Django. It is intentionally containing security flaws from the [OWASP Top 10 (2021)](https://owasp.org/Top10/).
 
 ---
