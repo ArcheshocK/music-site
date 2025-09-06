@@ -1,1 +1,2 @@
 Django>=5.0,<6.0
+# django-axes>=6.0.0  # fix flaw 5: add for brute force protection

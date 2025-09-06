@@ -9,13 +9,16 @@
         <li>
           {{ f }} —
           <a class="btn" href="{% url 'download_music' f %}">Download</a>
-          <a class="btn" href="{% url 'toggle_favorite' f %}">
-            {% if f in favorites %}
-              ★ Unfavorite
-            {% else %}
-              ☆ Favorite
-            {% endif %}
-          </a>
+          <form method="post" action="{% url 'toggle_favorite' f %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn">
+              {% if f in favorites %}
+                ★ Unfavorite
+              {% else %}
+                ☆ Favorite
+              {% endif %}
+            </button>
+          </form>
         </li>
       {% endfor %}
     </ul>

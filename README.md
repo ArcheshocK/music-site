@@ -22,30 +22,47 @@ It demonstrates a simple music library web application written in Django. It is 
 
 ## Security Flaws Demonstrated
 
-### [Flaw 1: Broken Access Control (A01:2021)](https://github.com/ArcheshocK/music-site/blob/main/library/views.py#L40-L55)
+### [Flaw 1: Broken Access Control (A01:2021)](https://github.com/ArcheshocK/music-site/blob/main/library/views.py#L38-L57)
 - Any authenticated user can download any file, regardless of authorization.
-- Suggested fix : add permission checks to restrict downloads to files authorized for the user.
+- fix : add permission checks to restrict downloads to files authorized for the user.
+- Note: The access control fix may still expose detailed error information due to DEBUG=True (see Flaw 4 fix).
 
-### [Flaw 2: Sensitive Data Exposure (A04:2021)](https://github.com/ArcheshocK/music-site/blob/main/music_site/settings.py#L19-L23)
-- The Django `SECRET_KEY` is hardcoded and visible in the repository
-- In production, secrets should be stored in environment variables
+**Screenshots:**
+- ![Before Fix](screenshots/flaw-1-before.png)
+- ![After Fix](screenshots/flaw-1-after.png)
 
-### [Flaw 3: Cross-Site Request Forgery (A05:2021)](https://github.com/ArcheshocK/music-site/blob/main/templates/registration/login.html#L8-L14)
-- Forms are vulnerable to CSRF if `{% csrf_token %}` is missing
-- Fix (alredy active in code): CSRF token added to login form
+### [Flaw 2: Cross-Site Request Forgery (A02:2021)](https://github.com/ArcheshocK/music-site/blob/main/music_site/settings.py#L36-L46)
+- CSRF middleware is disabled, so CSRF tokens are not validated even when present
+- fix: have the `CsrfViewMiddleware` set line in settings.py
 
-### [Flaw 4: SQL Injection (A03:2021)](https://github.com/ArcheshocK/music-site/blob/main/library/views.py#L80-L103)
+**Screenshots:**
+- ![Before Fix](screenshots/flaw-2-before.png)
+- ![After Fix](screenshots/flaw-2-after.png)
+
+### [Flaw 3: SQL Injection (A03:2021)](https://github.com/ArcheshocK/music-site/blob/main/library/views.py#L86-L104)
 - Raw SQL query is executed with unsanitized user input
 - suggested fix: use Django ORM (`User.objects.filter(...)`) or parameterized queries
 
-### [Flaw 5: Security Misconfiguration (A05:2021)](https://github.com/ArcheshocK/music-site/blob/main/music_site/settings.py#L22-L26)
+**Screenshots:**
+- ![Before Fix](screenshots/flaw-3-before.png)
+- ![After Fix](screenshots/flaw-3-after.png)
+
+### [Flaw 4: Security Misconfiguration (A05:2021)](https://github.com/ArcheshocK/music-site/blob/main/music_site/settings.py#L18-L22)
 - `DEBUG = True` is enabled which exposes sensitive information if deployed in production
 - Fix: set `DEBUG = False` in production
 
-### [Flaw 6: Identification and Authentication Failures (A07:2021)](https://github.com/ArcheshocK/music-site/blob/main/music_site/settings.py#L1-L13) [(login.html)](https://github.com/ArcheshocK/music-site/blob/main/templates/registration/login.html#L3-L8)
+**Screenshots:**
+- ![Before Fix](screenshots/flaw-4-before.png)
+- ![After Fix](screenshots/flaw-4-after.png)
+
+### [Flaw 5: Identification and Authentication Failures (A07:2021)](https://github.com/ArcheshocK/music-site/blob/main/music_site/settings.py#L4-L12) [(login.html)](https://github.com/ArcheshocK/music-site/blob/main/templates/registration/login.html#L5-L7)
 
 - no rate limiting or lockout for repeated failed login attempts
 - suggested fix: integrate `django-axes` to block brute force login attempts
+
+**Screenshots:**
+- ![Before Fix](screenshots/flaw-5-before.png)
+- ![After Fix](screenshots/flaw-5-after.png)
 
 ---
 

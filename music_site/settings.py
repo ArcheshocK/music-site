@@ -1,11 +1,10 @@
-# from datetime import timedelta
 from pathlib import Path
 
-# flaw 6: Identification and Authentication Failures (A07:2021)
-# Djangos default login view does not provide any rate limiting or lockout mechanism
-# so without additional protection, the app is vulnerable to brute force login attempts
 
-# suggested fix :
+# flaw 5: Identification and Authentication Failures (A07:2021)
+# Djangos default login does not provide any rate limiting or lockout mechanism
+# so without additional protection, the app is vulnerable to brute force login attempts
+#  fix :
 # you can use a package like django-axes:
 # INSTALLED_APPS += ['axes']
 # MIDDLEWARE.insert(0, 'axes.middleware.AxesMiddleware')
@@ -14,15 +13,12 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-8o0u8_e!replace-this-in-prod!9y)w&2f8'
+SECRET_KEY = 'b2p)l=$_e&-k2+v9_u=*8*-9zko2s&o_uaeu0%!h3n#=7@bhrv'
 
-# flaw 2: Sensitive Data Exposure (A04:2021)
-#  secret key is hardcoded and visible. In a real deployment, this should be set as an environment variable.
-
-# flaw 5: Security Misconfiguration (A05:2021)
+# flaw 4: Security Misconfiguration (A05:2021)
 DEBUG = True
-# Debug mode is left on which can expose sensitive information if deployed in production
-# suggested fix:
+# Debug mode is left on; can expose sensitive information if deployed in production
+# fix:
 # DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
@@ -37,15 +33,19 @@ INSTALLED_APPS = [
     'library',
 ]
 
+# flaw 2: cross-site request forgery (a02:2021)
+# csrf middleware is disabled, so tokens aren not validated
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',  
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+#  fix: uncomment csrf middleware line above
 
 ROOT_URLCONF = 'music_site.urls'
 
@@ -73,6 +73,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},

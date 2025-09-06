@@ -35,34 +35,34 @@ def music_list(request):
     })
 
 
+# flaw 1: broken access control (a01:2021)  
+# no permission checks; any user can download any file
 @login_required
 def download_music(request, filename):
     root = settings.MUSIC_ROOT.resolve()
     try:
         file_path = (root / filename).resolve(strict=True)
-        file_path.relative_to(root)  # prevents path traversal
+        file_path.relative_to(root)
     except (FileNotFoundError, ValueError):
         raise Http404("File not found.")
 
-    # FLAW 1: Broken Access Control (A01:2021)
-    # Any authenticated user can download any file. The application does not verify
-    # whether the file is authorized for that user
 
-    # Suggested fix :
-    # if not DownloadPermission.objects.filter(user=request.user, filename=filename).exists():
-    #     raise Http404("You don't have access to this file.")
 
-    # log the download
+
+    # suggested fix: add permission check
+    # if not user_has_permission(request.user, filename):
+    #     raise Http404("access denied")
+
     DownloadLog.objects.create(user=request.user, filename=filename)
-
     return FileResponse(open(file_path, 'rb'), as_attachment=True, filename=filename)
 
 
 @login_required
 def toggle_favorite(request, filename):
-    fav, created = Favorite.objects.get_or_create(user=request.user, filename=filename)
-    if not created:
-        fav.delete()
+    if request.method == 'POST':
+        fav, created = Favorite.objects.get_or_create(user=request.user, filename=filename)
+        if not created:
+            fav.delete()
     return redirect('music_list')
 
 
@@ -78,7 +78,7 @@ def user_activity(request):
 from django.db import connection
 from django.contrib.auth.models import User
 
-# FLAW 4: SQL Injection (A03:2021)
+# flaw 3: SQL Injection (A03:2021)
 # This view runs a raw SQL query with user input directly inserted
 # This can lead to SQL injection attacks if an attacker crafts a malicious query string
 
@@ -98,7 +98,7 @@ def search_users(request):
         'query': query
     })
 
-# suggested fix :
+#  fix :
 # use Django's ORM or parameterized SQL instead:
 #
 # results = User.objects.filter(username__icontains=query).values_list('id', 'username')

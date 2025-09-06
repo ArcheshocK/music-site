@@ -2,14 +2,11 @@
 {% block content %}
   <h1>Sign in</h1>
 
-  {# flaw 6: identification and authentication failures (A07:2021) #}
+  {# flaw 5: identification and authentication failures (A07:2021) #}
   {# this login form does not include any protection against brute force login attempts #}
-  {# suggested fix : you can use django-axes to detect repeated failed logins #}
+  {#  fix : you can use django-axes to detect repeated attempts #}
 
   <form method="post">
-    {# flaw 3: cross-site request forgery (A05:2021) #}
-    {# if {% csrf_token %} was missing, this form would be vulnerable to CSRF attacks #}
-    {# suggested fix: make sure {% csrf_token %} is always included in post forms #}
     {% csrf_token %}
     
     {{ form.as_p }}
