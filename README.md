@@ -32,7 +32,7 @@ It demonstrates a simple music library web application written in Django. It is 
 - ![Before Fix](screenshots/flaw-1-before.png)
 - ![After Fix](screenshots/flaw-1-after.png)
 
-### [Flaw 2: Cross-Site Request Forgery (A02:2021)](https://github.com/ArcheshocK/music-site/blob/main/music_site/settings.py#L36-L49)
+### [Flaw 2: Cross-Site Request Forgery (potentially falls under: A02:2021)](https://github.com/ArcheshocK/music-site/blob/main/music_site/settings.py#L36-L49)
 - CSRF middleware is disabled, so CSRF tokens are not validated even when present
 - Fix: uncomment `CsrfViewMiddleware` in settings.py and remove `@csrf_exempt` decorators from login/logout views
 - Django's CSRF protection works automatically when middleware is enabled - templates already include `{% csrf_token %}` so no additional decorators needed
