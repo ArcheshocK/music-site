@@ -15,7 +15,18 @@ class Favorite(models.Model):
     added_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'filename')  # this prevent duplicates
+        unique_together = ('user', 'filename')
 
     def __str__(self):
         return f"{self.user} ❤️ {self.filename}"
+
+class FilePermission(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    filename = models.CharField(max_length=255)
+    granted_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'filename')
+    
+    def __str__(self):
+        return f"{self.user} -> {self.filename}"

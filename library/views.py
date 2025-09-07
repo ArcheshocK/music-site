@@ -1,9 +1,10 @@
-from pathlib import Path
 from django.conf import settings
 from django.http import FileResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import DownloadLog, Favorite
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login, logout
+from .models import DownloadLog, Favorite, FilePermission
 
 
 def _list_music_files():
@@ -46,11 +47,11 @@ def download_music(request, filename):
     except (FileNotFoundError, ValueError):
         raise Http404("File not found.")
 
-
-
-
-    # suggested fix: add permission check
-    # if not user_has_permission(request.user, filename):
+    # flaw 1: missing access control check
+    # any user can download any file - no permission validation
+    
+    # fix: add permission check
+    # if not FilePermission.objects.filter(user=request.user, filename=filename).exists():
     #     raise Http404("access denied")
 
     DownloadLog.objects.create(user=request.user, filename=filename)
@@ -102,3 +103,26 @@ def search_users(request):
 # use Django's ORM or parameterized SQL instead:
 #
 # results = User.objects.filter(username__icontains=query).values_list('id', 'username')
+
+# csrf exempt views for login/logout to work while flaw 2 is active
+@csrf_exempt
+def custom_login(request):
+    error = None
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password') 
+        if username and password:
+            user = authenticate(request, username=username, password=password)
+            if user and user.is_active:
+                login(request, user)
+                return redirect('music_list')
+            else:
+                error = 'invalid credentials'
+        else:
+            error = 'username and password required'
+    return render(request, 'registration/login.html', {'error': error})
+
+@csrf_exempt  
+def custom_logout(request):
+    logout(request)
+    return redirect('login')
