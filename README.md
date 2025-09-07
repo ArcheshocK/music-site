@@ -22,7 +22,7 @@ It demonstrates a simple music library web application written in Django. It is 
 
 ## Security Flaws Demonstrated
 
-### [Flaw 1: Broken Access Control (A01:2021)](https://github.com/ArcheshocK/music-site/blob/main/library/views.py#L52-L60)
+### [Flaw 1: Broken Access Control (A01:2021)](https://github.com/ArcheshocK/music-site/blob/main/library/views.py#L39-L60)
 - Any authenticated user can download any file, regardless of authorization.
 - Example: alice has permission only for adrenaline.mp3 and static.mp3, but can download Untitled.mp3 (which only bob should access)
 - Fix : add permission checks to restrict downloads to files authorized for the user.
@@ -34,14 +34,15 @@ It demonstrates a simple music library web application written in Django. It is 
 
 ### [Flaw 2: Cross-Site Request Forgery (A02:2021)](https://github.com/ArcheshocK/music-site/blob/main/music_site/settings.py#L36-L49)
 - CSRF middleware is disabled, so CSRF tokens are not validated even when present
-- Fix: have the `CsrfViewMiddleware` set line in settings.py
+- Fix: uncomment `CsrfViewMiddleware` in settings.py and remove `@csrf_exempt` decorators from login/logout views
+- Django's CSRF protection works automatically when middleware is enabled - templates already include `{% csrf_token %}` so no additional decorators needed
 - **Note:** Due to Django's updated security defaults, login/logout views needed `@csrf_exempt` decorator to function while demonstrating this flaw. This workaround is required because course content is outdated compared to current Django security implementations.
 
 **Screenshots:**
 - ![Before Fix](screenshots/flaw-2-before.png)
 - ![After Fix](screenshots/flaw-2-after.png)
 
-### [Flaw 3: SQL Injection (A03:2021)](https://github.com/ArcheshocK/music-site/blob/main/library/views.py#L89-L107)
+### [Flaw 3: SQL Injection (A03:2021)](https://github.com/ArcheshocK/music-site/blob/main/library/views.py#L82-L105)
 - Raw SQL query is executed with unsanitized user input
 - Fix: use Django ORM (`User.objects.filter(...)`) or parameterized queries
 

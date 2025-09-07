@@ -99,12 +99,13 @@ def search_users(request):
         'query': query
     })
 
-#  fix :
+# flaw 3 fix :
 # use Django's ORM or parameterized SQL instead:
-#
 # results = User.objects.filter(username__icontains=query).values_list('id', 'username')
+# 
 
 # csrf exempt views for login/logout to work while flaw 2 is active
+# fix: remove @csrf_exempt decorator when csrf middleware is enabled
 @csrf_exempt
 def custom_login(request):
     error = None
@@ -122,6 +123,7 @@ def custom_login(request):
             error = 'username and password required'
     return render(request, 'registration/login.html', {'error': error})
 
+# fix: remove @csrf_exempt decorator when csrf middleware is enabled
 @csrf_exempt  
 def custom_logout(request):
     logout(request)
